@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block customcss -%}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{%- endblock %}
+{% block navbar -%}{%- endblock %}
+{% block contents -%}{%- endblock %}
+
+{# 	comment:
+	A file to not show navbar, and main.css file for auth processing.
+#}

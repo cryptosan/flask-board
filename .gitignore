@@ -1,0 +1,6 @@
+*.db
+*.pyc
+*.sublime-project
+*.sublime-workspace
+.idea/
+migrations/
