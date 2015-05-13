@@ -11,17 +11,17 @@ app = Flask(__name__)
 app.config.from_object('config')
 
 
+# Init extends.
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+lm = LoginManager(app)
+
+
 # Blueprint
 from app.auth import auth
 from app.board import board
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(board, url_prefix='/board')
-
-
-# Init extends.
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-lm = LoginManager(app)
 
 
 # A function that system requests login to users.

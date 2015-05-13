@@ -21,7 +21,7 @@ def auth_bf_req():
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-    msg
+    # msg
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and User.check_password(user.pw_hash, form.password.data):
@@ -39,18 +39,21 @@ def logout():
     return "Logout page"
 
 
+# Todo: Check duplicated user email. / DONE.
 @auth.route('/register')
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user_role = Role.query.filter_by(name='User').first()
-        user = User(
-            email=form.email.data,
-            nickname=form.nickname.data,
-            pw_hash=User.make_a_hash(form.password.data),
-            role_id=user_role)
-        db.session.add(user)
-        db.session.commit()
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            user_role = Role.query.filter_by(name='User').first()
+            user = User(
+                email=form.email.data,
+                nickname=form.nickname.data,
+                pw_hash=User.make_a_hash(form.password.data),
+                role_id=user_role)
+            db.session.add(user)
+            db.session.commit()
     return render_template('auth/register.html', form=form)
 
 

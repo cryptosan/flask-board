@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from app import db, bcrypt
 
-
 class User(db.Model):
     __tablename__ = 'users'
 
