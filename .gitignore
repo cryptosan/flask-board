@@ -2,5 +2,7 @@
 *.pyc
 *.sublime-project
 *.sublime-workspace
+*.wpr
+*.wpu
 .idea/
 migrations/

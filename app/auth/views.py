@@ -6,6 +6,7 @@ from flask.ext.login import login_required, current_user
 from jinja2 import TemplateNotFound
 from .forms import LoginForm, RegisterForm
 from app.models import User, Role
+from app import db
 
 
 auth = Blueprint('auth', __name__, template_folder='templates')
@@ -39,8 +40,9 @@ def logout():
     return "Logout page"
 
 
-# Todo: Check duplicated user email. / DONE.
-@auth.route('/register')
+# Todo: Check duplicated user email. :
+# Todo: db commit is being got an error about interface. :
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
@@ -54,6 +56,7 @@ def register():
                 role_id=user_role)
             db.session.add(user)
             db.session.commit()
+            return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
