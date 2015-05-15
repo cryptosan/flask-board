@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from flask import Blueprint, render_template, abort, g, session, redirect, url_for
-from flask.ext.login import login_required, current_user
+from flask import Blueprint, render_template, abort, g, session, redirect, url_for, flash
+from flask.ext.login import login_required, current_user, logout_user
 from jinja2 import TemplateNotFound
 from .forms import LoginForm, RegisterForm
-from app.models import User, Role
-from app import db
+from ..models import User, Role
+from .. import db
 
 
 auth = Blueprint('auth', __name__, template_folder='templates')
@@ -33,30 +33,35 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
+# Todo: Have to unittest. :
 @auth.route('/logout')
 @login_required
 def logout():
-    # if g.user.is
-    return "Logout page"
+   logout_user()
+   flash('You have been logged out.')
+   return redirect(url_for('auth.login'))
 
 
 # Todo: Check duplicated user email. :
-# Todo: db commit is being got an error about interface. :
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user is None:
-            user_role = Role.query.filter_by(name='User').first()
-            user = User(
-                email=form.email.data,
-                nickname=form.nickname.data,
-                pw_hash=User.make_a_hash(form.password.data),
-                role_id=user_role)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('auth.login'))
+        form.validate_email(form.email)
+        form.validate_nickname(form.nickname)
+
+        user_role = Role.query.filter_by(name='User').first()
+        user = User(email=form.email.data,
+                    nickname=form.nickname.data,
+                    pw_hash=User.make_a_hash(form.password.data),
+                    role_id=user_role.id)
+
+        # Warning!,
+        # If SQL field type and parameter type are different,
+        # raise an error on DB commit
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
