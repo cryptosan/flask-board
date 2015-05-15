@@ -2,8 +2,9 @@
 from __future__ import unicode_literals
 
 from flask.ext.wtf import Form
-from wtforms import PasswordField, StringField, SubmitField, BooleanField
+from wtforms import PasswordField, StringField, SubmitField, BooleanField, ValidationError
 from wtforms.validators import Email, DataRequired, Length, EqualTo, Required
+from ..models import User
 
 
 class LoginForm(Form):
@@ -30,4 +31,14 @@ class RegisterForm(Form):
                              [DataRequired(),
                               EqualTo('confirm', message='Password must match')])
     confirm = PasswordField('Repeat Password')
-    submit = SubmitField('Submit')
+    submit = SubmitField('Register')
+
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email already registered.')
+
+    def validate_nickname(self, field):
+        if User.query.filter_by(nickname=field.data).first():
+            raise ValidationError('Nickname already registered.')
+
