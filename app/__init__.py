@@ -20,8 +20,10 @@ lm = LoginManager(app)
 # Blueprint
 from app.auth import auth
 from app.board import board
+from app.profile import profile
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(board, url_prefix='/board')
+app.register_blueprint(profile, url_prefix='/profile')
 
 
 # A function that system requests login to users.
