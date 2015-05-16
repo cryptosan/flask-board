@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from flask.ext.login import UserMixin
 from app import db, bcrypt
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -15,18 +15,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '[User %r]' % (self.nickname)
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        return unicode(self.id)     # for Python 2
 
     # Password hash check
     @staticmethod

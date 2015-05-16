@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from flask import Blueprint, render_template, abort, g, session, redirect, url_for, flash
-from flask.ext.login import login_required, current_user, logout_user
+from flask import Blueprint, render_template, abort, g, session, redirect, url_for, flash, request
+from flask.ext.login import login_required, current_user, logout_user, login_user
 from jinja2 import TemplateNotFound
 from .forms import LoginForm, RegisterForm
 from ..models import User, Role
@@ -26,10 +26,9 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user is not None and User.check_password(user.pw_hash, form.password.data):
-            session['email'] = form.email.data
-            session['nickname'] = form.nickname.data
-            return redirect(url_for('index'))
-
+            login_user(user, form.remember_me.data)
+            return redirect(request.args.get('next') or url_for('index'))
+        flash('Invalid username or password')
     return render_template('auth/login.html', form=form)
 
 
@@ -37,9 +36,9 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
-   logout_user()
-   flash('You have been logged out.')
-   return redirect(url_for('auth.login'))
+    logout_user()
+    flash('You have been logged out.')
+    return redirect(url_for('auth.login'))
 
 
 # Todo: Check duplicated user email. :
