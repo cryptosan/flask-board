@@ -41,7 +41,6 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
-# Todo: Check duplicated user email. :
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
