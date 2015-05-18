@@ -1,20 +1,45 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.bcrypt import Bcrypt
 from flask.ext.login import LoginManager
+from flask.ext.mail import Mail
 
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+# Mail server setting.
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+
+# You have to set up MAIL_USERNAME, and MAIL_PASSWORD into your bash.
+# for Linux or Mac OSX
+# (venv) $ export MAIL_USERNAME=<Gmail username>
+# (venv) $ export MAIL_PASSWORD=<Gmail password>
+# for Windows
+# (venv) $ set MAIL_USERNAME=<Gmail username>
+# (venv) $ set MAIL_PASSWORD=<Gmail password
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+
+# Custom setting on Mail
+app.config['MAIL_SUBJECT_PREFIX'] = 'FROSTLAB - '
+app.config['MAIL_SENDER'] = 'FrostLab'
+
+# Receive mail address for unittest.
+app.config['MAIL_RECEIVER'] = os.environ.get('MAIL_RECEIVER')
 
 
 # Init extends.
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 lm = LoginManager(app)
+mail = Mail(app)
 
 
 # Blueprint
