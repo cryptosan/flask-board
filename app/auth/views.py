@@ -6,7 +6,8 @@ from flask.ext.login import login_required, current_user, logout_user, login_use
 from jinja2 import TemplateNotFound
 from .forms import LoginForm, RegisterForm
 from ..models import User, Role
-from .. import db
+from ..mail import send_email
+from .. import db, app
 
 
 auth = Blueprint('auth', __name__, template_folder='templates')
@@ -15,6 +16,12 @@ auth = Blueprint('auth', __name__, template_folder='templates')
 @auth.before_request
 def auth_bf_req():
     g.user = current_user
+
+
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated() and not current_user.confirmed and request.endpoint[:5] != 'auth.':
+        return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/', methods=['GET', 'POST'])
@@ -32,7 +39,7 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-# Todo: Have to unittest. :
+# Todo: logout unittest.
 @auth.route('/logout')
 @login_required
 def logout():
@@ -41,6 +48,7 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
+# Todo: register unittest.
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -55,14 +63,33 @@ def register():
                     role_id=user_role.id)
 
         # Warning!,
-        # If SQL field type and parameter type are different,
-        # raise an error on DB commit
+        # If SQL field type and parameter type are different, if raise an error on DB commit
         db.session.add(user)
         db.session.commit()
+
+        token = user.generate_confirmation_token()
+        send_email(app.config['MAIL_RECEIVER'], 'Confirm Your Account',
+                   'auth/email/confirm', user=user, token=token)
+        flash('A confirmation email has been sent to you by email.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
 
 
-@auth.route('/apply')
-def register_apply():
-    return "apply page"
+# Todo: Implement confirm.
+# Todo: confirm unittest.
+@auth.route('/confirm/<token>')
+@login_required
+def confirm(token):
+    if current_user.confirmed:
+        return redirect(url_for('index'))
+    if current_user.confirm(token):
+        flash('You have confirmed your account. Thanks!')
+    else:
+        flash('The confirmation link is invalid or has expired')
+        return redirect(url_for('index'))
+
+
+# Todo: Implement unconfirm
+@auth.route('/unconfirm')
+def unconfirm():
+    pass
