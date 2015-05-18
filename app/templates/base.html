@@ -30,7 +30,12 @@
 					<li><a href="#">Menu5</a></li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#">Login</a></li>
+					{% if current_user.is_authenticated() -%}
+					<li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+					{% else %}
+					<li><a href="{{ url_for('profile') }}">{{ current_user.nickname }}</a></li>
+					<li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+					{%- endif %}
 				</ul>
 			</div>
 		</div>
