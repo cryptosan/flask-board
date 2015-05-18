@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from flask.ext.wtf import Form
 from wtforms import PasswordField, StringField, SubmitField, BooleanField, ValidationError
-from wtforms.validators import Email, DataRequired, Length, EqualTo, Required
+from wtforms.validators import Email, DataRequired, Length, EqualTo, Required, Regexp
 from ..models import User
 
 
@@ -26,6 +26,9 @@ class RegisterForm(Form):
                          Email('It\'s not an Email!')])
     nickname = StringField('Nickname',
                            [DataRequired(),
+                            Regexp('^[A-Za-z][A-Za-z0-9_.]*$',
+                                   0,
+                                   'Nicknames must have only letters, numbers, dots or underscores'),
                             Length(min=4, max=12)])
     password = PasswordField('New Password',
                              [DataRequired(),
