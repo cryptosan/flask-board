@@ -4,5 +4,6 @@
 *.sublime-workspace
 *.wpr
 *.wpu
+top.py
 .idea/
 migrations/
