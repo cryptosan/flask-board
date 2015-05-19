@@ -92,4 +92,6 @@ def confirm(token):
 # Todo: Implement unconfirm
 @auth.route('/unconfirm')
 def unconfirm():
-    pass
+    if current_user.is_anonymouse() or current_user.confirmed:
+        return redirect('index')
+    return render_template('auth/email/unconfirmed.html')
