@@ -24,15 +24,18 @@ app.config['MAIL_USE_TLS'] = True
 # for Windows
 # (venv) $ set MAIL_USERNAME=<Gmail username>
 # (venv) $ set MAIL_PASSWORD=<Gmail password
-app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+# app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+# app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+# app.config['MAIL_RECEIVER'] = os.environ.get('MAIL_RECEIVER')
+
+import top
+app.config['MAIL_USERNAME'] = top.USERNAME
+app.config['MAIL_PASSWORD'] = top.PASSWORD
+app.config['MAIL_RECEIVER'] = top.RECEIVER
 
 # Custom setting on Mail
 app.config['MAIL_SUBJECT_PREFIX'] = 'FROSTLAB - '
 app.config['MAIL_SENDER'] = 'FrostLab'
-
-# Receive mail address for unittest.
-app.config['MAIL_RECEIVER'] = os.environ.get('MAIL_RECEIVER')
 
 
 # Init extends.
