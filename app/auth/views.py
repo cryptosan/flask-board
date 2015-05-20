@@ -39,7 +39,6 @@ def login():
     return render_template('auth/login.html', form=form)
 
 
-# Todo: logout unittest.
 @auth.route('/logout')
 @login_required
 def logout():
